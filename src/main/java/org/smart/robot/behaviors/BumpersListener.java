@@ -59,11 +59,11 @@ public class BumpersListener implements FeatureListener, Behavior {
     }
 
     private boolean isLeftBumperPressed(Feature feature) {
-        return feature.getRangeReading().getRange() == RobotConstants.LEFT_BAMPER_RANGE;
+        return feature.getRangeReading().getAngle() == RobotConstants.LEFT_BAMPER_ANGLE;
     }
 
     private boolean isRightBumperPressed(Feature feature) {
-        return feature.getRangeReading().getRange() == RobotConstants.RIGHT_BAMPER_RANGE;
+        return feature.getRangeReading().getAngle() == RobotConstants.RIGHT_BAMPER_ANGLE;
     }
 
     @Override

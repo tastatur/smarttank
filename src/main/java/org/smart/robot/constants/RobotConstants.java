@@ -1,7 +1,6 @@
 package org.smart.robot.constants;
 
 import lejos.nxt.Motor;
-import lejos.nxt.NXTRegulatedMotor;
 import lejos.nxt.SensorPort;
 import lejos.robotics.RegulatedMotor;
 
@@ -21,4 +20,7 @@ public class RobotConstants {
 
     public static final float LEFT_BAMPER_RANGE = ROBOT_WIDTH / 2;
     public static final float RIGHT_BAMPER_RANGE = -LEFT_BAMPER_RANGE;
+
+    public static final float LEFT_BAMPER_ANGLE = 90;
+    public static final float RIGHT_BAMPER_ANGLE = -90;
 }
