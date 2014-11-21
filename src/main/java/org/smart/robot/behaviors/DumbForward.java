@@ -12,15 +12,15 @@ import lejos.robotics.subsumption.Behavior;
  * I also save my path, so I can always go back
  */
 public class DumbForward implements Behavior {
-    private static final double DEFAULT_FORWARD_SPEED = 5;
+    private static final double DEFAULT_FORWARD_SPEED = 50;
     private static final double MIN_DISTANCE = 10;
     private DifferentialPilot pilot;
     private Path myPath;
     private PoseProvider poseProvider;
     private boolean moveForward = true;
-    private Pose previousPose;
+    private Pose previousPose = new Pose(0, 0, 0);
 
-    private DumbForward(DifferentialPilot pilot, Path myPath, PoseProvider poseProvider) {
+    public DumbForward(DifferentialPilot pilot, Path myPath, PoseProvider poseProvider) {
         this.pilot = pilot;
         this.myPath = myPath;
         this.poseProvider = poseProvider;
@@ -37,6 +37,7 @@ public class DumbForward implements Behavior {
 
     @Override
     public void action() {
+        moveForward = true;
         pilot.setTravelSpeed(DEFAULT_FORWARD_SPEED);
         pilot.forward();
         while (moveForward) {

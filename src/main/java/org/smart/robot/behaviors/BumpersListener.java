@@ -1,11 +1,13 @@
 package org.smart.robot.behaviors;
 
 import lejos.geom.Line;
+import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.robotics.objectdetection.Feature;
 import lejos.robotics.objectdetection.FeatureDetector;
 import lejos.robotics.objectdetection.FeatureListener;
 import lejos.robotics.subsumption.Behavior;
+import org.smart.robot.constants.RobotConstants;
 import org.smart.robot.utils.*;
 
 import java.util.List;
@@ -14,19 +16,18 @@ import java.util.List;
  * Reaction on the pressed touch sensors (bumpers)
  */
 public class BumpersListener implements FeatureListener, Behavior {
-    private static final double BACKDISTANCE = -10;
+    private static final double BACKDISTANCE = -50;
 
     private DifferentialPilot pilot;
     private List<Line> obstacles;
     private boolean collisionDetected;
     private BackwardMovement movementMode;
-    private float rightBumperRange, leftBumperRange;
+    private PoseProvider pose;
 
-    public BumpersListener(DifferentialPilot pilot, List<Line> obstacles, float rightBumperRange, float leftBumperRange) {
+    public BumpersListener(DifferentialPilot pilot, List<Line> obstacles, PoseProvider pose) {
         this.pilot = pilot;
         this.obstacles = obstacles;
-        this.rightBumperRange = rightBumperRange;
-        this.leftBumperRange = leftBumperRange;
+        this.pose = pose;
     }
 
     @Override
@@ -39,6 +40,18 @@ public class BumpersListener implements FeatureListener, Behavior {
         } else if (isRightBumperPressed(feature)) {
             movementMode = BackwardMovement.TURN_LEFT;
         }
+
+        addObstacleToMap();
+    }
+
+    private void addObstacleToMap() {
+        float trackWidth = RobotConstants.ROBOT_WIDTH / 2;
+        float leftX = pose.getPose().getX() - trackWidth;
+        float rightX = pose.getPose().getX() + trackWidth;
+        float y = pose.getPose().getY();
+
+        Line obstacle = new Line(leftX, y, rightX, y);
+        obstacles.add(obstacle);
     }
 
     private boolean isBothBumpersPressed(Feature feature) {
@@ -46,11 +59,11 @@ public class BumpersListener implements FeatureListener, Behavior {
     }
 
     private boolean isLeftBumperPressed(Feature feature) {
-        return feature.getRangeReading().getRange() == leftBumperRange;
+        return feature.getRangeReading().getRange() == RobotConstants.LEFT_BAMPER_RANGE;
     }
 
     private boolean isRightBumperPressed(Feature feature) {
-        return feature.getRangeReading().getRange() == rightBumperRange;
+        return feature.getRangeReading().getRange() == RobotConstants.RIGHT_BAMPER_RANGE;
     }
 
     @Override
@@ -60,6 +73,7 @@ public class BumpersListener implements FeatureListener, Behavior {
 
     @Override
     public void action() {
+        pilot.stop();
         pilot.travel(BACKDISTANCE);
         pilot.rotate(calculateRotationAngle());
         this.collisionDetected = false;
